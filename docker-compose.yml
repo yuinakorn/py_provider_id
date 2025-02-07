@@ -1,0 +1,8 @@
+services:
+  main:
+    image: 'yuinakorn/py_provider_gunicorn:latest'
+    ports:
+      - '9081:8000'
+    volumes:
+      - './:/app'
+    restart: 'unless-stopped'
