@@ -1,6 +1,6 @@
 services:
   main:
-    image: 'yuinakorn/py_provider_gunicorn:latest'
+    image: 'yuinakorn/py_provider_id:latest'
     ports:
       - '9081:8000'
     volumes:
