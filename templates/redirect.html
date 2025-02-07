@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@100..900&display=swap" rel="stylesheet">
+    <title>กำลังยืนยันตัวตน-Provider ID</title>
+    <style>
+        body {
+            margin: 0;
+            display: flex;
+            /*background-color: #f0f0f0;*/
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            font-family: "Noto Sans Thai", sans-serif;
+            background-image: url("https://chiangmaihealth.go.th/images/logo/thaid-bg.png");
+            background-repeat: no-repeat;
+            background-size: cover;
+        }
+
+        .container {
+            width: 83.33%; /* 10/12 in percentage */
+            margin-top: -15rem;
+            padding: 20px;
+            border-radius: 8px;
+        }
+
+        .text-center {
+            text-align: center;
+        }
+
+        .spinner {
+            width: 11.2px;
+            height: 11.2px;
+            animation: spinner-o824ag 1.5s infinite linear;
+            position: relative;
+            margin: 0 auto;
+        }
+
+        .spinner div {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: #93eaf2;
+            border-radius: 50%;
+            animation: spinner-vse6n7 1.5s infinite ease;
+        }
+
+        .spinner div:nth-child(1) {
+            --rotation: 90;
+        }
+
+        .spinner div:nth-child(2) {
+            --rotation: 180;
+        }
+
+        .spinner div:nth-child(3) {
+            --rotation: 270;
+        }
+
+        .spinner div:nth-child(4) {
+            --rotation: 360;
+        }
+
+        @keyframes spinner-vse6n7 {
+            0%, 100% {
+                transform: rotate(calc(var(--rotation) * 1deg)) translateY(0);
+            }
+
+            50% {
+                transform: rotate(calc(var(--rotation) * 1deg)) translateY(300%);
+            }
+        }
+
+        @keyframes spinner-o824ag {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+    </style>
+    <script type="text/javascript">
+        // สร้าง query string ด้วย URLSearchParams
+        const params = new URLSearchParams({
+            t: "{{ jwt }}",
+        });
+
+        // เมื่อหน้าเว็บโหลดเสร็จ, เริ่มนับเวลา
+        window.onload = function() {
+            var redirectUri = "{{ redirect_uri }}?t={{ jwt }}";  // รับค่า redirect_uri จาก FastAPI
+            var waitTime = {{ wait_time }} * 1000;  // แปลงเวลาเป็นมิลลิวินาที (n วินาที = n000ms)
+
+            // แสดงข้อความในหน้าเว็บก่อนที่จะ redirect
+            setTimeout(function() {
+                window.location.href = redirectUri;  // ทำการ redirect ไปที่ URL
+            }, waitTime);  // รอ n วินาที
+        }
+    </script>
+</head>
+<body>
+<div class="container">
+    <div class="text-center">
+        <h1 id="message">ระบบยืนยันตัวตนด้วย Provider ID</h1>
+        <h2>กำลังพาคุณไปที่เว็บไซต์ {{ title }} ภายในเวลา <span id="countdown">5</span> วินาที...</h2>
+        <div class="spinner" id="spinner" style="margin-top: 5rem">
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // ทำการแสดง countdown แบบ real-time
+        var countdown = document.getElementById("countdown");
+        var timeLeft = {{ wait_time }};
+        var interval = setInterval(function() {
+            timeLeft -= 1;
+            countdown.textContent = timeLeft;
+            if (timeLeft <= 0) {
+                clearInterval(interval);
+            }
+        }, 1000);
+
+
+    let time2 = 30;
+    let interval2 = setInterval(() => {
+        time2--;
+        if (time2 === 0) {
+            clearInterval(interval2);
+            document.getElementById('message').textContent = "อาจมีบางอย่างผิดพลาด กรุณาปิดแล้วลองใหม่อีกครั้ง!";
+            let spinner = document.getElementById('spinner');
+            spinner.parentNode.removeChild(spinner);
+        }
+    }, 1000);
+
+</script>
+</body>
+</html>
