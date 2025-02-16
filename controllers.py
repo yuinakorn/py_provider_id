@@ -42,7 +42,7 @@ async def health_id(code: str, state: str, request: Request):
     # ตรวจสอบว่า response ส่งกลับมาถูกต้องหรือไม่
     if response.status_code == 200:
         print({"message": "ก่อนส่งไป provider", "data": response.json()})
-        json_response = response.json()
+        # json_response = response.json()
         health_access_token = response.json()["data"]["access_token"]
         decoded_token = jwt.decode(health_access_token, options={"verify_signature": False})
 
@@ -60,7 +60,7 @@ async def health_id(code: str, state: str, request: Request):
 
 # ฟังก์ชัน provider_id ที่จะรับ access_token และทำการ POST ต่อไป
 async def provider_id(health_access_token: str, id_card: str, state: str, request: Request):
-    url = os.getenv("URL_SERVICE_PROVIDER")  # URL ของ provider ที่ต้องการเรียก
+    url = os.getenv("URL_SERVICE_PROVIDER")  # URL ของ provider
 
     payload = {
         "client_id": os.getenv("PROV_CLIENT_ID"),
@@ -93,8 +93,8 @@ async def provider_id(health_access_token: str, id_card: str, state: str, reques
 
 async def get_profile_data(provider_access_token: str, id_card: str, state: str, request: Request):
     print({"message": "ใน get_profile_data()", "access_token": provider_access_token})
-    # split state with -
-    state = state.split("-")
+    # split state with "|"
+    state = state.split("|")
     redirect_uri = state[2]
 
     url = os.getenv("URL_PROFILE")
@@ -118,10 +118,11 @@ async def get_profile_data(provider_access_token: str, id_card: str, state: str,
             {"position": org["position"], "hcode": org["hcode"]}
             for org in data["data"]["organization"]
         ]
+        # สร้าง new_profile ที่มีเฉพาะ id_card และ organization
         new_profile = {
             "id_card": id_card,
-            "firstname_th": data["data"]["firstname_th"],
-            "lastname_th": data["data"]["lastname_th"],
+            # "firstname_th": data["data"]["firstname_th"],
+            # "lastname_th": data["data"]["lastname_th"],
             "organization": new_organization,
         }
 
